@@ -2,7 +2,14 @@ import express from "express"
 
 const app = express()
 
-app.use("/test",(req,res) => {
+app.use("/user",(req,res) => {
+    console.log(req.query, "params : ", req.params)
+    res.send("Hello! welcome to dev tinder")
+})
+
+
+app.use("/test/:userid/:position/:power",(req,res) => {
+    console.log(req.query, "params : ", req.params)
     res.send("Hello! welcome to dev tinder")
 })
 
