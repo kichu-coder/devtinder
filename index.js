@@ -1,33 +1,42 @@
-import express from "express"
+import express from "express";
 import { authMiddleware } from "./middlewares/auth.js";
+import { connectDb } from "./config/database.js";
+import { User } from "./models/user.js";
 
-const app = express()
+const app = express();
 
 app.use(express.json()); // Built-in middleware in Express to parse JSON bodies
 
+app.post("/signUp", async (req, res) => {
+  try {
+    const userObj = {
+      firstName: "neelima",
+      lastName: "garlpati",
+      emailId: "neelu@kichu.com",
+      password: "kichuneeluhusband",
+      age: 26,
+      gender: "Female",
+    };
 
-app.post("/admin/getAllData" , authMiddleware , (req, res) => {
-    try {
-        throw new Error("new Error to handle")
-        res.send("All data sent")
-    } catch(err) {
-        // next(err)
-        res.status(500).send("Somethign went wrong contact support team")
-    }
-})
+    // creating a new instance of a user model
+    const user = new User(userObj);
 
-app.get("/admin/deleteUser",authMiddleware,(req,res) =>{
-        res.send("Deleted a User")
-})
+    const result = await user.save();
 
-app.use("/", (err , req, res, next) => {
-    if(err) {
-        console.log("Error caught: " , err.message)
-        res.status(500).send("Something went wrong")
-    }
-    next()
-})
+    res.send(result);
+  } catch (err) {
+    console.log(err);
+    res.status(400).send("Error Saving the User : " + err.message)
+  }
+});
 
-app.listen(3000 , () => {
-    console.log("server is listening in port 3000")
-})
+connectDb()
+  .then(() => {
+    console.log("Database connection established");
+    app.listen(3000, () => {
+      console.log("server is listening in port 3000");
+    });
+  })
+  .catch((err) => {
+    console.log(`Database connection cannot be established ${err}`);
+  });
