@@ -10,6 +10,14 @@ const app = express();
 
 app.use(express.json()); // Built-in middleware in Express to parse JSON bodies
 
+app.get("/dummy",(req,res,next) => {
+  console.log("frist function")
+  // next()
+},(req,res) => {
+  console.log("second function")
+  res.send("Inside second function")
+})
+
 app.post("/signUp", async (req, res) => {
   try {
     // validate user data
