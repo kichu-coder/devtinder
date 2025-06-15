@@ -91,12 +91,14 @@ app.post("/profile", authMiddleware, async (req, res) => {
   }
 });
 
-app.post("sendConnectionRequest", (req, res) => {
+app.post("/sendConnectionRequest", authMiddleware, (req, res) => {
   //sending a connection request
+
+  const user = req.user
 
   console.log("Sending connection request");
 
-  res.send("Connection request sent");
+  res.send(user.firstName + " Connection request sent");
 });
 
 connectDb()
