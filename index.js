@@ -5,18 +5,26 @@ import { User } from "./models/user.js";
 import bcrypt from "bcrypt";
 import { validateUserData } from "./helpers/utils.js";
 import validator from "validator";
+import cookieParser from "cookie-parser";
+import jwt from "jsonwebtoken";
 
 const app = express();
 
+app.use(cookieParser());
+
 app.use(express.json()); // Built-in middleware in Express to parse JSON bodies
 
-app.get("/dummy",(req,res,next) => {
-  console.log("frist function")
-  // next()
-},(req,res) => {
-  console.log("second function")
-  res.send("Inside second function")
-})
+app.get(
+  "/dummy",
+  (req, res, next) => {
+    console.log("frist function");
+    // next()
+  },
+  (req, res) => {
+    console.log("second function");
+    res.send("Inside second function");
+  }
+);
 
 app.post("/signUp", async (req, res) => {
   try {
@@ -58,72 +66,37 @@ app.post("/login", async (req, res) => {
 
     if (!user) {
       throw new Error("Invalid credentials");
-    } 
-
-    const isValidUser = await bcrypt.compare(password, user.password);
-
-      if(!isValidUser) {
-        res.send("Login failed!!!")
-      } else {
-        res.send("Login Successfull!!!");
-      }
-  } catch (err) {
-    res.status(400).send("Something went wrong : " + err.message);
-  }
-});
-
-app.get("/user", async (req, res) => {
-  const userEmail = req.body.emailId;
-
-  try {
-    const users = await User.findOne({ emailId: userEmail }).exec();
-
-    if (users.length === 0) {
-      res.status(404).send("User Not Found");
     }
 
-    res.send(users);
+    const isValidUser = await user.validatePassword(password);
+
+    if (!isValidUser) {
+      res.send("Login failed!!!");
+    } else {
+      
+      const token = await user.getJWT();
+      res.cookie("token", token, { expires: new Date(Date.now() + 900000) });
+      res.send("Login Successfull!!!");
+    }
   } catch (err) {
     res.status(400).send("Something went wrong : " + err.message);
   }
 });
 
-app.get("/feed", async (req, res) => {
+app.post("/profile", authMiddleware, async (req, res) => {
   try {
-    const users = await User.find({});
-
-    res.send(users);
+    res.send(req.user);
   } catch (err) {
-    res.status(400).send("Soemthing went wrong" + err.message);
+    res.status(400).send("Something went wrong : " + err.message);
   }
 });
 
-app.delete("/user", async (req, res) => {
-  const userId = req.body.userId;
+app.post("sendConnectionRequest", (req, res) => {
+  //sending a connection request
 
-  try {
-    const users = await User.findByIdAndDelete(userId);
+  console.log("Sending connection request");
 
-    res.send(`User Deleted Successfully : ${users}`);
-  } catch (err) {
-    res.status(400).send("Something went wrong" + err.message);
-  }
-});
-
-app.patch("/user", async (req, res) => {
-  const data = req.body;
-  const userId = req.body.userId;
-
-  try {
-    const user = await User.findByIdAndUpdate({ _id: userId }, data, {
-      new: true,
-      runValidators: true,
-    });
-
-    res.send(user);
-  } catch (err) {
-    res.status(400).send("Something went wrong" + err.message);
-  }
+  res.send("Connection request sent");
 });
 
 connectDb()

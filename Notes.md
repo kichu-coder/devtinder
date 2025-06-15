@@ -141,3 +141,11 @@ const user = await User.findByIdAndUpdate({ _id: userId }, data, {
   new: true,
   runValidators: true,
 });
+
+//if a hacker got access to your cookies and token in your cookies it is called cookie hijacking as the hacker can access all the apis with that token
+
+// mostly for all e-commerce websites like facebook, instagram or amazon or any marketing websites like gmail once we login the token will never be expired we will be logged in state until either we refresh the browser and clear the cache and storage or logout from the website. for websites like jaroda (stcok trading) the token expires in 1d. In banking websites we need to login for every 15 to 20 mins. Banking websites don't even have the concept of tokens they just create a session and once the session expires the user is logged out.
+
+
+
+
