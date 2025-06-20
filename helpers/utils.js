@@ -14,3 +14,13 @@ export const validateUserData = (req) =>{
         throw Error("Please Enter a Strong Password")
     }
 }
+
+export const validateEditRequest = (req) => {
+    const editRequest = req.body;
+
+    const editableFields = ["firstName", "lastName" , "age", "gender", "photoUrl", "about", "skills" ]
+
+    const isValidRequest = Object.keys(editRequest).every((field) => editableFields.includes(field))
+
+    return isValidRequest
+}

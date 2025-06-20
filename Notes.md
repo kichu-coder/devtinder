@@ -147,5 +147,61 @@ const user = await User.findByIdAndUpdate({ _id: userId }, data, {
 // mostly for all e-commerce websites like facebook, instagram or amazon or any marketing websites like gmail once we login the token will never be expired we will be logged in state until either we refresh the browser and clear the cache and storage or logout from the website. for websites like jaroda (stcok trading) the token expires in 1d. In banking websites we need to login for every 15 to 20 mins. Banking websites don't even have the concept of tokens they just create a session and once the session expires the user is logged out.
 
 
+// we can add methods to schema and use them
+// here we access the user data using this and it should be in normal function not an arrow function
+userSchema.methods.getJWT = async function(){
+    const user = this;
+
+    const token = await jwt.sign({ _id : user._id  }, 'kishorelovesneelima' ,{expiresIn : "1d"})
+
+    return token
+}
+// we can access the method like below
+const user = await User.findOne({ emailId: emailId });
+const token = await user.getJWT();
+
+//we can use enum data type to keep only limited possible values for a column
+ enum : {
+            values : ["ignore","interested","accepted","rejected"],
+            message : `{VALUE} is not valid`
+        }
+
+// we can use pre save function to execute code before save 
+connectionRequestSchema.pre('save', function(next) {
+  const connectionRequest = this;
+
+  if((connectionRequest.fromUserId).equals(connectionRequest.toUserId)){
+    throw new Error("Cannot send a connection request to yourself")
+  }
+  next();
+});
+
+//for columns we use more in search we can index them 
+firstName : {
+        type : String,
+        required : true,
+        index : true,
+        minLength : 4,
+        maxLength : 15
+}
+
+// we can also use compound indexes if we are use we will two or more columns together to search data in most cases
+userSchema.index({firstName : 1 , lastName : 1})
+
+// we can use ref and populate to link to tables and get data instead of join
+ fromUserId : {
+        type : Schema.Types.ObjectId,
+        ref : "User",
+        required : true
+    },
+  const connectionRequests = await connectionRequestModel.find({toUserId : loggedInUser._id, 
+      status : "interested"
+    }).populate(
+      "fromUserId",
+      USER_SAFE_DATA
+    );
+
+
+
 
 

@@ -9,6 +9,7 @@ const userSchema = new Schema({
     firstName : {
         type : String,
         required : true,
+        index : true,
         minLength : 4,
         maxLength : 15
     },
@@ -69,12 +70,12 @@ const userSchema = new Schema({
         timestamps : true
 });
 
+userSchema.index({firstName : 1 , lastName : 1})
+
 userSchema.methods.getJWT = async function(){
     const user = this;
 
     const token = await jwt.sign({ _id : user._id  }, 'kishorelovesneelima' ,{expiresIn : "1d"})
-
-    console.log(token)
 
     return token
 }
