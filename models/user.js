@@ -88,4 +88,12 @@ userSchema.methods.validatePassword = async function(password) {
     return isValidUser
 }
 
+userSchema.set('toJSON', {
+  transform: function (doc, ret, options) {
+    delete ret.password;
+    delete ret.emailId;
+    return ret;
+  }
+});
+
 export const User =  mongoose.model("User" , userSchema);

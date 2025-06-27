@@ -62,7 +62,7 @@ requestRouter.post(
       if (!["accepted", "rejected"].includes(status)) {
         return res.json({ message: "Status is not valid" });
       }
-
+      
       const existingConnectionRequest = await connectionRequestModel.findOne({
        _id : requestId,
        toUserId : loggedInUser._id,

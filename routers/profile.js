@@ -30,7 +30,6 @@ profileRouter.patch("/edit", authMiddleware , async(req,res) => {
 
    loggedInUser = loggedInUser.toJSON()
 
-   console.log(loggedInUser)
    res.send(loggedInUser)
 
   }catch(err) {

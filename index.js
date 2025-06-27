@@ -11,8 +11,14 @@ import {authRouter} from "./routers/auth.js";
 import {requestRouter} from "./routers/request.js";
 import {profileRouter} from "./routers/profile.js";
 import {userRouter} from "./routers/user.js";
+import cors from "cors"
 
 const app = express();
+
+app.use(cors({
+  origin : "http://localhost:5173",
+  credentials : true
+}));
 
 app.use(cookieParser());
 

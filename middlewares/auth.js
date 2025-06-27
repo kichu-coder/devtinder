@@ -5,22 +5,21 @@ export const authMiddleware = async (req, res, next) => {
   try {
     const { token } = req.cookies;
     if (!token) {
-      throw new Error("Invalid Credentials");
+      return res.status(401).send("Please Login!!!")
     }
 
     const decodedMessage = jwt.verify(token, "kishorelovesneelima");
 
-    const user = await User.findById({ _id: decodedMessage._id });
+    const user = await User.findById({ _id: decodedMessage._id })
 
     if (!user) {
       throw new Error("User Not Found");
     }
-    console.log(user);
 
     req.user = user;
 
     next();
   } catch (err) {
-    res.send("Something went wrong : " + err.message);
+    res.status(400).send("Something went wrong : " + err.message);
   }
 };

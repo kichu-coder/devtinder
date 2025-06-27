@@ -39,19 +39,16 @@ userRouter.post("/connections", authMiddleware, async (req, res) => {
         {fromUserId : loggedInUser._id}
       ],
       status : "accepted"
-    }).populate("fromUserId", USER_SAFE_DATA)
+    }).populate("fromUserId", USER_SAFE_DATA).populate("toUserId", USER_SAFE_DATA).lean();
 
-    const data = connectionRequests.map((row) => {
-      console.log(row.fromUserId._id , loggedInUser._id, row.fromUserId._id.equals(loggedInUser._id))
+    let data = connectionRequests.map((row) => {
       if (row.fromUserId._id.equals(loggedInUser._id)) {
         return row.toUserId;
       }
       return row.fromUserId;
     });
 
-    res.send(data)
-
-    // res.send(connectionRequests)
+    res.json({ data });
 
   } catch (err) {
     res.status(400).send("Something went wrong : " + err.message);
